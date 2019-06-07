@@ -1,0 +1,24 @@
+{
+  "name": "workingday-uk",
+  "version": "1.0.0",
+  "description": "Determine if a date is a working day in the UK, according to UK government website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fishbowler/workingday-uk.git"
+  },
+  "keywords": [
+    "working",
+    "workday",
+    "date"
+  ],
+  "author": "Dan Caseley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Fishbowler/workingday-uk/issues"
+  },
+  "homepage": "https://github.com/Fishbowler/workingday-uk#readme",
+}
