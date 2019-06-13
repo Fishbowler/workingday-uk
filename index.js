@@ -1,4 +1,5 @@
 const govBankHolidays = 'https://www.gov.uk/bank-holidays.json'
+const govBankHolidaysLocal = './bank-holidays.json'
 
 const isWeekend = (date) => {
     const dayOfWeek = date.getDay()
@@ -8,17 +9,25 @@ const isWeekend = (date) => {
     return false
 }
 
-const getBankHolidayData = (() => {
-    return makeRequest(govBankHolidays)
-        .then((bhData) => {
-            const bhDateArray = bhData['england-and-wales']['events']
-            const bhDatesOnly = bhDateArray.reduce((acc, val) => acc.concat(val.date), [])
-            return Promise.resolve(bhDatesOnly)
+const getDatesFromBHData = bhData => {
+    const bhDateArray = bhData['england-and-wales']['events']
+    const bhDatesOnly = bhDateArray.reduce((acc, val) => acc.concat(val.date), [])
+    return Promise.resolve(bhDatesOnly)
+}
+
+const getBankHolidayData = ((offline) => {
+    if(offline){
+        return getDatesFromBHData(require(govBankHolidaysLocal))
+    } else {
+        return makeRequest(govBankHolidays)
+        .then(bhData => {
+            return getDatesFromBHData(bhData)
         })
+    }
 })
 
-const isBankHoliday = (dateString) => {
-    return getBankHolidayData()
+const isBankHoliday = (dateString, offline = true) => {
+    return getBankHolidayData(offline)
         .then((bankHolidays) => {
             return Promise.resolve(bankHolidays.includes(dateString))
         })
@@ -30,6 +39,7 @@ const isWorkingDay = function () { //Can't be an arrow function - we need `argum
     //Date parsing from params - only one of these will be populated
     let dateString = isDateString(args[0]) && args.shift()
     let date = !dateString && ((isInstanceOfDate(args[0]) && args.shift()) || new Date())
+    let offline = (typeof args[0] === 'boolean' ? args.shift() : true)
 
     //Get the representations to match up - we need both
     if (dateString) {
@@ -48,7 +58,7 @@ const isWorkingDay = function () { //Can't be an arrow function - we need `argum
         return Promise.resolve(false)
     }
 
-    return isBankHoliday(dateString)
+    return isBankHoliday(dateString, offline)
         .then(isBH => {
             return Promise.resolve(!isBH)
         })
