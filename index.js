@@ -1,5 +1,5 @@
 const govBankHolidays = 'https://www.gov.uk/bank-holidays.json'
-const govBankHolidaysLocal = './bank-holidays.json'
+const govBankHolidaysLocal = require('./bank-holidays.json')
 
 const isWeekend = (date) => {
     const dayOfWeek = date.getDay()
@@ -17,7 +17,7 @@ const getDatesFromBHData = bhData => {
 
 const getBankHolidayData = ((offline) => {
     if(offline){
-        return getDatesFromBHData(require(govBankHolidaysLocal))
+        return getDatesFromBHData(govBankHolidaysLocal)
     } else {
         return makeRequest(govBankHolidays)
         .then(bhData => {
